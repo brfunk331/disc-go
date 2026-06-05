@@ -1,17 +1,12 @@
 name: Sync to S3
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
-      - main  # or your default branch name
+      - main
 
 jobs:
   sync-to-s3:
-    # Only run if PR was merged (not just closed)
-    if: github.event.pull_request.merged == true
-    
     runs-on: ubuntu-latest
     
     permissions:
@@ -29,8 +24,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync to S3
-        run: |
-          aws s3 sync . s3://${{ secrets.S3_BUCKET }} \
+        run: aws s3 sync . s3://${{ secrets.S3_BUCKET }} \
             --delete \
             --exclude ".git/*" \
             --exclude ".github/*" \
